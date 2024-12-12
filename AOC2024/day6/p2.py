@@ -2,7 +2,7 @@ from itertools import cycle
 
 DIR = cycle(((-1, 0), (0, 1), (1, 0), (0, -1)))  # ^(-1,0) v(1,0) <(0,-1) >(0,1)
 
-with open("input") as f:
+with open("input_test") as f:
     map = f.read().splitlines()
 
 for i, line in enumerate(map):
@@ -32,7 +32,8 @@ def get_visited_position():
 
 
 corect_obstacle_position = []
-for obstacle_position in get_visited_position()[1:]:
+for i, obstacle_position in enumerate(get_visited_position()[1:]):
+    print(i)
     DIR = cycle(((-1, 0), (0, 1), (1, 0), (0, -1)))  # ^(-1,0) v(1,0) <(0,-1) >(0,1)
 
     position = start_position

@@ -13,7 +13,6 @@ files = [f for f in drive if isinstance(f, tuple)][::-1]
 
 for f in files:
     f_index = drive.index(f)
-    print(f_index)
     for i, d in enumerate(drive[:f_index]):
         if isinstance(d, int):
             if d >= f[0]:
