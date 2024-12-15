@@ -50,6 +50,7 @@ with open("input") as file:
 def print_map():
     max_x = max(walls)[0]
     max_y = max(walls, key=lambda x: x[1])[1]
+    lines = []
     y = 0
     while y <= max_y:
         line = ""
@@ -66,7 +67,8 @@ def print_map():
                 line += "."
             x += 1
         y += 1
-
+        lines.append(line)
+    for line in lines:
         print(line)
 
 
