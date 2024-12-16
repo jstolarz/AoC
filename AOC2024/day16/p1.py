@@ -38,6 +38,14 @@ def get_new_position(move: str, positon: tuple[int]):
         return x + 1, y
 
 
+def reconstruct_path(node):
+    path = []
+    while node:
+        path.append(node)
+        node = node.came_from
+    return path
+
+
 def a_star(start, goal, walls):
     open_list = [Node(start, ">", 0, abs(start[0] - goal[0]) + abs(start[1] - goal[1]))]
     closed_list = []
@@ -62,25 +70,16 @@ def a_star(start, goal, walls):
     return None
 
 
-def reconstruct_path(node):
-    path = []
-    while node:
-        path.append(node)
-        node = node.came_from
-    return path
-
-
 r = a_star(start_positon, end_positon, walls)
-c = r.came_from
-points = 0
-while c:
-    points += 1
-    if c.came_from and c.direction != c.came_from.direction:
-        points += 1000
-    c = c.came_from
-print(points)
-
 path = reconstruct_path(r)
+points = 0
+for p in path:
+    points += 1
+    if p.came_from and p.direction != p.came_from.direction:
+        points += 1000
+print(points - 1)
+
+
 for j in range(size[1]):
     for i in range(size[0]):
         if (i, j) in walls:

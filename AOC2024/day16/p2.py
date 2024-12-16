@@ -1,12 +1,10 @@
 # flake8: noqa: E501
 
-import random
-
 walls = []
 
 
 class Node:
-    def __init__(self, position, direction, g, h, came_from=None):
+    def __init__(self, position, direction, g, h, came_from):
         self.position = position
         self.direction = direction  # > < ^ v
         self.g = g
@@ -40,71 +38,59 @@ def get_new_position(move: str, positon: tuple[int]):
         return x + 1, y
 
 
-def a_star(start, goal, walls):
-    open_list = [Node(start, ">", 0, random.choice([0, 2000]))]
-    closed_list = []
-    while open_list:
-        current = min(open_list, key=lambda x: x.f)
-        open_list.remove(current)
-        closed_list.append(current)
-        if current.position == goal:
-            return current
-        for direction in [">", "<", "^", "v"]:
-            new_position = get_new_position(direction, current.position)
-            if new_position in walls:
-                continue
-            if any(node.position == new_position for node in closed_list):
-                continue
-            g = current.g + 1 + (0 if direction == current.direction else 1000)
-            h = (
-                random.choice([0, 2000])
-                + abs(new_position[0] - goal[0])
-                + abs(new_position[1] - goal[1])
-            )
-            f = g + h
-            if new_position == (2, 11):
-                print(f"new_position={new_position} g={g} h={h} f={f}")
-            if new_position == (1, 10):
-                print(f"new_position={new_position} g={g} h={h} f={f}")
-            if any(node.position == new_position and node.f > f for node in open_list):
-                continue
-            open_list.append(Node(new_position, direction, g, h, current))
-    return None
-
-
 def reconstruct_path(node):
     path = []
     while node:
-        path.append(node.position)
+        path.append(node)
         node = node.came_from
     return path
 
 
-path = []
-for i in range(10):
-    r = a_star(start_positon, end_positon, walls)
-    c = r.came_from
+def a_star(start, goal, walls):
+    open_list = [
+        Node(start, ">", 0, abs(start[0] - goal[0]) + abs(start[1] - goal[1]), None)
+    ]
+    closed_list = {}
+
+    i = 0
+    while open_list:
+        i += 1
+        current = min(open_list, key=lambda x: x.f)
+        if i == 1000:
+            i = 0
+            print(current.position)
+        open_list.remove(current)
+        closed_list[(current.position, current.direction)] = current.g
+        if current.position == goal:
+            yield current
+        for direction in [">", "<", "^", "v"]:
+            new_position = get_new_position(direction, current.position)
+            if new_position in walls:
+                continue
+            g = current.g + 1 + (0 if direction == current.direction else 1000)
+            if (new_position, direction) in closed_list:
+                if closed_list[(new_position, direction)] < g:
+                    continue
+            h = abs(new_position[0] - goal[0]) + abs(new_position[1] - goal[1])
+            f = g + h
+            # if any(node.position == new_position and node.f > f for node in open_list):
+            #     continue
+            open_list.append(Node(new_position, direction, g, h, current))
+    return None
+
+
+result = []
+rw = a_star(start_positon, end_positon, walls)
+for _ in range(500):
+    r = next(rw)
+    path = reconstruct_path(r)
     points = 0
-    while c:
+    for p in path:
         points += 1
-        if c.came_from and c.direction != c.came_from.direction:
+        if p.came_from and p.direction != p.came_from.direction:
             points += 1000
-        c = c.came_from
-    if points == 108504:
-        path.extend(reconstruct_path(r))
-        print(len(set(path)))
+    print(points - 1)
 
-
-for j in range(size[1]):
-    for i in range(size[0]):
-        if (i, j) in walls:
-            print("#", end="")
-        elif (i, j) == start_positon:
-            print("S", end="")
-        elif (i, j) == end_positon:
-            print("E", end="")
-        elif (i, j) in set(path):
-            print("O", end="")
-        else:
-            print(".", end="")
-    print()
+    if points == 108505:
+        result.extend(path)
+        print(len(set([p.position for p in result])))
