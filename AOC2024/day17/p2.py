@@ -94,17 +94,33 @@ with open("input") as f:
     rc = int(lines[2].split(":")[1])
     program = [int(x) for x in lines[4].split(":")[1].split(",")]
 
+steps = [
+    (2, 1000000000000),
+    (3, 10000000000),
+    (4, 1000000000),
+    (5, 1000000000),
+    (6, 10000000),
+    (7, 1000000),
+    (8, 100000),
+    (9, 100000),
+    (10, 10000),
+    (11, 1000),
+    (12, 1000),
+    (13, 100),
+    (16, 1),
+]
 
-ra = 202975183644 * (10**3)
-
-while True:
-    computer = Computer(ra, rb, rc, program)
-    result = computer.run()
-    if result[-14:] == program[-14:]:
-        print(ra // (10**2), result)
-    if result == program:
-        print("!!!!!!!!!!!!!!!!!!", ra)
-        break
-    ra += 1
-    if ra > 205973735000000:
-        break
+for step in steps:
+    while True:
+        computer = Computer(ra, rb, rc, program)
+        result = computer.run()
+        if result == program:
+            print("!!!!!!!!!!!!!!!!!!", ra)
+            break
+        if result[-step[0] :] == program[-step[0] :]:
+            print(ra, result)
+            ra -= step[1]
+            break
+        ra += step[1]
+        if len(result) > len(program):
+            assert False
