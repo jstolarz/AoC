@@ -1,0 +1,37 @@
+[tool.ruff]
+exclude = [
+  ".vscode",
+  ".git",
+  ".ruff_cache",
+  ".mypy_cache",
+  ".pytest_cache",
+  "pyproject.toml",
+]
+
+line-length = 119
+target-version = "py310"
+
+fix = true
+lint.select = [
+  "B",      # bugbear
+  "C",      # flake8-comprehensions
+  "E",      # pycodestyle errors
+  "F",      # pyflakes errors
+  "I",      # isort
+  "RUF100", # unused noqa (yesqa)
+  "W",      # pycodestyle warnings
+]
+
+lint.ignore = [
+  "E203", # whitespace before ':'
+  "E266", # too many leading '#' for block comment
+  "E501", # line too long
+]
+
+[tool.mypy]
+python_version = "3.11"
+mypy_path = "gitlab_ci_bot"
+color_output = true
+pretty = true
+error_summary = true
+show_error_codes = true
