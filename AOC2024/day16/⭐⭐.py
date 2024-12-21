@@ -93,4 +93,4 @@ for _ in range(500):
 
     if points == 108505:
         result.extend(path)
-        print(len(set([p.position for p in result])))
+        print(len({p.position for p in result}))
