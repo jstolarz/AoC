@@ -1,0 +1,21 @@
+with open(0) as f:
+    lines = f.read().splitlines()
+
+def next_secret_number(secret_number: int) -> int:
+    PRUNE_VALUE = 16777216
+    secret_number = (secret_number * 64) ^ secret_number
+    secret_number = secret_number % PRUNE_VALUE
+    secret_number = (secret_number // 32) ^ secret_number
+    secret_number = secret_number % PRUNE_VALUE
+    secret_number = (secret_number * 2048) ^ secret_number
+    secret_number = secret_number % PRUNE_VALUE
+    return secret_number
+
+
+sum_numbers = 0
+for line in lines:
+    secret_number = int(line)
+    for _ in range(2000):
+        secret_number = next_secret_number(secret_number)
+    sum_numbers += secret_number
+print(sum_numbers)
