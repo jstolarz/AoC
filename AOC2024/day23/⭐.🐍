@@ -1,0 +1,22 @@
+with open(0) as f:
+    connections = f.read().splitlines()
+
+groups = []
+
+def search_common_computers(group1, group2):
+    return set(sum([n.strip().split("-") for n in group1],[])) & set(sum([n.strip().split("-") for n in group2],[]))
+    
+
+for conn in connections:
+    a,b = conn.strip().split("-")
+    with_a = [c for c in connections if a in c]
+    with_b = [c for c in connections if b in c]
+    comps = search_common_computers(with_a, with_b) - {a,b}
+    for c in comps:
+        groups.append(tuple(sorted([a,b,c])))
+groups = set(groups)
+count =  0
+for group in groups:
+    if any(comp.startswith("t") for comp in group):
+        count += 1
+print(count)

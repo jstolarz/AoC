@@ -1,0 +1,25 @@
+with open(0) as f:
+    connections = f.read().splitlines()
+    connections = [conn.strip().split("-") for conn in connections]
+
+groups = []
+
+def is_connected(a,b):
+    return ([a,b] in connections) or ([b,a] in connections)
+
+def search_common_computers(group1, group2):
+    return set(sum(group1,[])) & set(sum(group2,[]))
+    
+for conn in connections:
+    a, b = conn
+    with_a = [c for c in connections if a in c]
+    with_b = [c for c in connections if b in c]
+    commons = list(search_common_computers(with_a, with_b))
+    g = []
+    for c in commons:
+        if all(is_connected(c, x) for x in commons if c!=x):
+            g.append(c)
+    groups.append(g)
+    
+groups.sort(key=len)
+print(groups)
