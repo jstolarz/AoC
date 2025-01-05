@@ -47,4 +47,4 @@ for gate in gates:
         output.append(gate)
 
 output.sort(key=lambda g: g.output)
-print(int("".join([str(g.value) for g in output])[::-1], base =2))
+print(int("".join([str(g.value) for g in output])[::-1], base = 2))

@@ -1,0 +1,40 @@
+locks = []
+keys = []
+
+with open(0) as f:
+    current = None
+    heights = [0, 0, 0, 0, 0]
+    h = 0
+    for line in f.read().splitlines():
+        if current is None and line == "#####":
+            current = "lock"
+            continue
+        if current is None and line == ".....":
+            current = "key"
+            continue
+        if line == "":
+            if current == "key":
+                keys.append(heights)
+            else:
+                locks.append(heights)
+            current = None
+            heights = [0, 0, 0, 0, 0]
+            h = 0
+            continue
+        if h == 5:
+            continue
+        h += 1
+        for i, x  in enumerate(line):
+            if x == "#":
+                heights[i] += 1
+    if current == "key":
+        keys.append(heights)
+    else:
+        locks.append(heights)
+
+count = 0
+for l in locks:
+    for k in keys:
+        if all(sum(a) <= 5 for a in zip(l,k)):
+            count += 1
+print(count)
