@@ -1,0 +1,50 @@
+class Gate:
+    def __init__(self, in1, in2, op, output):
+        self.input1 = in1
+        self.input2 = in2
+        self.operation = op
+        self.output = output
+        self.value = None
+
+    def __repr__(self):
+        return f"{self.input1} {self.operation} {self.input2} -> {self.output}"
+
+    def calculate(self):
+        in1 = get_wire_value(self.input1)
+        in2 = get_wire_value(self.input2)
+        match self.operation:
+            case "AND":
+                self.value = in1 and in2
+            case "OR":
+                self.value = in1 or in2
+            case "XOR":
+                self.value = in1 ^ in2
+
+start_values = {}
+gates: list[Gate] = []
+
+def get_wire_value(name):
+    if name in start_values:
+        return start_values[name]
+    for gate in gates:
+        if gate.output == name:
+            if gate.value is None:
+                gate.calculate()
+            return gate.value
+
+with open(0) as f:
+    for line in f.read().splitlines():
+        s = line.split()
+        if len(s) == 2:
+            start_values[s[0][:-1]] = int(s[1])
+        if len(s) == 5:
+            gates.append(Gate(s[0], s[2], s[1], s[4]))
+
+output = []
+for gate in gates:
+    gate.calculate()
+    if gate.output.startswith("z"):
+        output.append(gate)
+
+output.sort(key=lambda g: g.output)
+print(int("".join([str(g.value) for g in output])[::-1], base =2))
