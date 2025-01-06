@@ -1,0 +1,137 @@
+class Gate:
+    def __init__(self, in1, in2, op, output):
+        self.input1 = in1
+        self.input2 = in2
+        self.operation = op
+        self.output = output
+        self.value = None
+
+    def __repr__(self):
+        return f"{self.input1} {self.operation} {self.input2} -> {self.output}"
+
+    def calculate(self):
+        in1 = get_wire_value(self.input1)
+        in2 = get_wire_value(self.input2)
+        match self.operation:
+            case "AND":
+                self.value = in1 and in2
+            case "OR":
+                self.value = in1 or in2
+            case "XOR":
+                self.value = in1 ^ in2
+
+
+start_values = {}
+gates: list[Gate] = []
+
+
+def get_wire_value(name):
+    if name in start_values:
+        return start_values[name]
+    for gate in gates:
+        if gate.output == name:
+            if gate.value is None:
+                gate.calculate()
+            return gate.value
+
+
+with open(0) as f:
+    for line in f.read().splitlines():
+        s = line.split()
+        if len(s) == 2:
+            start_values[s[0][:-1]] = int(s[1])
+        if len(s) == 5:
+            gates.append(Gate(s[0], s[2], s[1], s[4]))
+
+output = []
+for gate in gates:
+    gate.calculate()
+    if gate.output.startswith("z"):
+        output.append(gate)
+
+
+def get_gate(output_name):
+    for gate in gates:
+        if gate.output == output_name:
+            return gate
+
+
+def make_wire_name(name, i):
+    return f"{name}{i:02d}"
+
+
+def verify_output(name, bit_number):
+    gate = get_gate(name)
+    if gate.operation != "XOR":
+        return False
+    if bit_number == 0:
+        return sorted([gate.input1, gate.input2]) == ["x00", "y00"]
+    return (
+        verify_xor_input(gate.input1, bit_number)
+        and verify_carry_bit(gate.input2, bit_number)
+    ) or (
+        verify_carry_bit(gate.input1, bit_number)
+        and verify_xor_input(gate.input2, bit_number)
+    )
+
+
+def verify_xor_input(name: str, bit_number: int):
+    gate = get_gate(name)
+    if gate.operation != "XOR":
+        return False
+    return sorted([gate.input1, gate.input2]) == [
+        make_wire_name("x", bit_number),
+        make_wire_name("y", bit_number),
+    ]
+
+
+def verify_carry_bit(name, bit_number):
+    gate = get_gate(name)
+    if bit_number == 1:
+        return gate.operation == "AND"  # simplifies the logic
+    if gate.operation != "OR":
+        return False
+    return (
+        verify_and_input(gate.input1, bit_number - 1)
+        and verify_and_carry(gate.input2, bit_number - 1)
+    ) or (
+        verify_and_input(gate.input1, bit_number - 1)
+        and verify_and_carry(gate.input2, bit_number - 1)
+    )
+
+
+def verify_and_input(name, bit_number):
+    gate = get_gate(name)
+    if gate.operation != "AND":
+        return False
+    return sorted([gate.input1, gate.input2]) == [
+        make_wire_name("x", bit_number),
+        make_wire_name("y", bit_number),
+    ]
+
+
+def verify_and_carry(name, bit_number):
+    gate = get_gate(name)
+    if gate.operation != "AND":
+        return False
+    return (
+        verify_xor_input(gate.input1, bit_number)
+        and verify_carry_bit(gate.input2, bit_number)
+    ) or (
+        verify_carry_bit(gate.input1, bit_number)
+        and verify_xor_input(gate.input2, bit_number)
+    )
+
+
+wrong_gates = []
+for i in range(45):
+    if not verify_output(make_wire_name("z", i), i):
+        wrong_gates.append(make_wire_name("z", i))
+
+for g in wrong_gates:
+    print(g)
+# print(start_values)
+# print("", "".join([str(start_values[g]) for g in start_values if g.startswith("x")])[::-1])
+# print("", "".join([str(start_values[g]) for g in start_values if g.startswith("y")])[::-1])
+# print(len("".join([str(g.value) for g in output])[::-1]))
+# print(int("".join([str(g.value) for g in output])[::-1], base = 2))
