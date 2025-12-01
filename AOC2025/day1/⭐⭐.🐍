@@ -1,0 +1,28 @@
+from hmac import new
+
+rotations = []
+with open(0) as f:
+    for line in f.read().splitlines():
+        if line[0] == "R":
+            rotations.append(int(line[1:]))
+        elif line[0] == "L":
+            rotations.append(-int(line[1:]))
+
+point_at_zero = 0
+position = 50
+
+for rotation in rotations:
+    if rotation > 0:
+        position += rotation
+        if position >= 100:
+            point_at_zero += position // 100
+    else:
+        new_position = position + rotation
+        if new_position <= 0:
+            point_at_zero += (new_position // -100) + (1 if position > 0 else 0)
+        position = new_position
+    position %= 100
+
+    print(rotation, position)
+    print(point_at_zero)
+print(point_at_zero)
