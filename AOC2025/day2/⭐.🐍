@@ -1,0 +1,13 @@
+ranges = []
+with open(0) as f:
+    for ran in f.read().split(","):
+        ranges.append(tuple(int(r) for r in ran.split("-")))
+
+sum_of_invalid_ids = 0
+for r in ranges:
+    for i in range(r[0], r[1] + 1):
+        i_str = str(i)
+        if i_str[:len(i_str)//2] == i_str[len(i_str)//2:]:
+            sum_of_invalid_ids += i
+            print(i)
+print(sum_of_invalid_ids)
