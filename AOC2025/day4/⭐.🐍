@@ -1,0 +1,23 @@
+with open(0) as f:
+    diagram = f.read().splitlines()
+
+def count_neighbors_with_at(diagram, row, col) -> int:
+    count = 0
+    directions = [(-1,-1), (-1,0), (-1,1), (0,-1), (0,1), (1,-1), (1,0), (1,1)]
+    
+    for dr, dc in directions:
+        new_row, new_col = row + dr, col + dc
+        if 0 <= new_row < len(diagram) and 0 <= new_col < len(diagram[new_row]):
+            if diagram[new_row][new_col] == '@':
+                count += 1
+    
+    return count
+
+rolls_to_remove = 0
+for i in range(len(diagram)):
+    for j in range(len(diagram[i])):
+        if diagram[i][j] == '@' and count_neighbors_with_at(diagram, i, j) < 4:
+            print(i,j)
+            rolls_to_remove += 1
+
+print(rolls_to_remove)
