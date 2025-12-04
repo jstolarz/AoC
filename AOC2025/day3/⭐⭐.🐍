@@ -1,0 +1,17 @@
+banks = []
+with open(0) as f:
+    for bank in f.read().splitlines():
+        banks.append([int(i) for i in bank])
+
+banks_joltage = 0
+
+for bank in banks:
+    i = 0
+    values = []
+    for j in range(-11, 1):
+        j = j if j else None
+        n = max(bank[i:j])
+        i = bank[i:j].index(n) + i + 1
+        values.append(n)
+    banks_joltage += int("".join(str(v) for v in values))
+print(banks_joltage)

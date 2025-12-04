@@ -1,0 +1,14 @@
+banks = []
+with open(0) as f:
+    for bank in f.read().splitlines():
+        banks.append([int(i) for i in bank])
+
+banks_joltage = 0
+
+for bank in banks:
+    n = max(bank[:-1])
+    i = bank.index(n)
+    m = max(bank[i+1:])
+    banks_joltage += (10*n + m)
+
+print(banks_joltage)
