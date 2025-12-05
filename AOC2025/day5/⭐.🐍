@@ -1,0 +1,22 @@
+ingredient_ids = []
+ids_ranges = []
+
+with open(0) as f:
+    ranges = True
+    for line in f.read().splitlines():
+        if line == "":
+            ranges = False
+            continue
+        if ranges:
+            ids_ranges.append(tuple(int(i) for i in line.split("-")))
+        else:
+            ingredient_ids.append(int(line))
+
+fresh_ids = 0
+for i in ingredient_ids:
+    for m,n in ids_ranges:
+        if i >= m and i <= n:
+            fresh_ids += 1
+            break
+
+print(fresh_ids)

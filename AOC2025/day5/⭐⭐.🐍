@@ -1,0 +1,24 @@
+fresh_ids_ranges = []
+
+with open(0) as f:
+    for line in f.read().splitlines():
+        if line == "":
+            break
+        range_ids = [int(i) for i in line.split("-")]
+        found = []
+        for i, (m, n) in enumerate(fresh_ids_ranges):
+            if m <= range_ids[0] <= n:
+                found.append(fresh_ids_ranges.pop(i))
+        for i, (m, n) in enumerate(fresh_ids_ranges):
+            if m <= range_ids[1] <= n:
+                found.append(fresh_ids_ranges.pop(i))
+        for i, (m, n) in enumerate(fresh_ids_ranges):
+            if range_ids[0] <= m <= range_ids[1]:
+                found.append(fresh_ids_ranges.pop(i))
+        found.append(range_ids)
+        fresh_ids_ranges.append([min([i[0] for i in found]), max([i[1] for i in found])])
+
+count = 0
+for r in fresh_ids_ranges:
+    count += (r[1]+1-r[0])
+print(count)
